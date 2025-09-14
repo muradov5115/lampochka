@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <title>Lampochka ip bilan yoqish/o‘chirish</title>
+  <style>
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      font-family: sans-serif;
+      color: #eee;
+    }
+    .lamp {
+      position: relative;
+      width: 100px;
+      height: 200px;
+    }
+    .bulb {
+      width: 100px;
+      height: 100px;
+      background: #555;
+      border-radius: 50%;
+      margin: 0 auto;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .bulb.on {
+      background: yellow;
+      box-shadow: 0 0 40px yellow;
+    }
+    .rope {
+      width: 4px;
+      height: 100px;
+      background: #aaa;
+      margin: 0 auto;
+      position: relative;
+      transition: height 0.2s ease; /* joyiga qaytish animatsiyasi */
+    }
+    .handle {
+      width: 20px;
+      height: 20px;
+      background: #666;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: grab;
+      transition: bottom 0.2s ease; /* joyiga qaytish animatsiyasi */
+    }
+  </style>
+</head>
+<body>
+  <div class="lamp">
+    <div class="bulb" id="bulb"></div>
+    <div class="rope" id="rope">
+      <div class="handle" id="handle"></div>
+    </div>
+  </div>
+  <p>Ipni pastga torting → qo‘yib yuboring → lampochka yonadi/o‘chadi</p>
+
+  <script>
+    const bulb = document.getElementById("bulb");
+    const rope = document.getElementById("rope");
+    const handle = document.getElementById("handle");
+
+    let startY = 0;
+    let isDragging = false;
+    let isOn = false;
+
+    handle.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startY = e.clientY;
+      rope.style.transition = "none";   // tortayotgan paytda animatsiya bo‘lmasin
+      handle.style.transition = "none";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      let diff = e.clientY - startY;
+
+      if (diff > 0 && diff < 80) { // ipni 80px gacha tortish mumkin
+        rope.style.height = 100 + diff + "px";
+        handle.style.bottom = -20 - diff + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+
+      // joyiga qaytarishda animatsiya qo‘shamiz
+      rope.style.transition = "height 0.2s ease";
+      handle.style.transition = "bottom 0.2s ease";
+      rope.style.height = "100px";
+      handle.style.bottom = "-20px";
+
+      let diff = e.clientY - startY;
+      if (diff > 50) { // agar pastga 50px dan ko‘p tortilsa
+        isOn = !isOn;
+        bulb.classList.toggle("on", isOn);
+      }
+    });
+  </script>
+</body>
+</html>
